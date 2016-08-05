@@ -3,51 +3,13 @@
 <#else>
     <#assign jobName="${executionData.job.name}">
 </#if>
-<#assign message="[Execution #${executionData.id}](${executionData.href}) of job [${jobName}](${executionData.job.href})">
-<#if trigger == "start">
-    <#assign state="Started">
-<#elseif trigger == "failure">
-    <#assign state="Failed">
-<#else>
-    <#assign state="Succeeded">
-</#if>
-
 {
-   "attachments":[
-      {
-         "fallback":"${state}: ${message}",
-         "pretext":"${message}",
-         "color":"${color}",
-         "fields":[
-            {
-               "title":"Job Name",
-               "value":"[${jobName}](${executionData.job.href})",
-               "short":true
-            },
-            {
-               "title":"Project",
-               "value":"${executionData.project}",
-               "short":true
-            },
-            {
-               "title":"Status",
-               "value":"${state}",
-               "short":true
-            },
-            {
-               "title":"Execution ID",
-               "value":"[#${executionData.id}](${executionData.href})",
-               "short":true
-            }
-<#if trigger == "failure">
-            ,{
-               "title":"Failed Nodes",
-               "value":"${executionData.failedNodeListString!"- (Job itself failed)"}",
-               "short":false
-            }
+    "username": "${username}",
+<#if icon_url??>
+    "icon_url": "${icon_url}",
 </#if>
-]
-      }
-   ]
+    "text": "[Execution](${executionData.href}) ${trigger} for job [${jobName}](${executionData.job.href})
+:white_check_mark: **Success:** <#if executionData.succeededNodeList??><#list executionData.succeededNodeList as node>#${node} </#list><#else>None</#if>
+:red_circle: **Failed:** <#if executionData.failedNodeList??><#list executionData.failedNodeList as node>#${node} </#list><#else>None</#if>
+"
 }
-
